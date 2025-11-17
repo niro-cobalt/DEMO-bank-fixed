@@ -42,6 +42,7 @@ from pathlib import Path
 from MF_Create_PAC import create_pac
 
 import shutil
+REGION_STATUS_ERR = 'Unable to check region status.'
 import subprocess
 if not sys.platform.startswith('win32'):
     from pwd import getpwuid
@@ -51,25 +52,25 @@ def powershell(cmd):
     completed = subprocess.run(["powershell", "-Command", cmd], capture_output=True)
     return completed
 
-def checkElevation():
+def check_elevation():
     # Check if the current process is running as administator role
-    isAdmin = '$user = [Security.Principal.WindowsIdentity]::GetCurrent();if ((New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {exit 1} else {exit 0}'
-    completed = powershell(isAdmin)
+    isadmin = '$user = [Security.Principal.WindowsIdentity]::GetCurrent();if ((New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {exit 1} else {exit 0}'
+    completed = powershell(isadmin)
     return completed.returncode == 1
 
-def createWindowsDSN(database_connection, is_64bit, dsn_name, database_name):
-    driverBitism="32-bit"
+def create_windows_dsn(database_connection, is_64bit, dsn_name, database_name):
+    driverbitism="32-bit"
     if is_64bit == True:
-        driverBitism="64-bit"
+        driverbitism="64-bit"
 
-    findDriver='$Drivers = Get-OdbcDriver -Name "PostgreSQL*ANSI*" -Platform {};\n '.format(driverBitism)
+    finddriver='$Drivers = Get-OdbcDriver -Name "PostgreSQL*ANSI*" -Platform {};\n '.format(driverbitism)
     ##findDSN='$DSN = Get-OdbcDsn -Name "{}" -Platform {} -DsnType System;\n'.format(dsn_name, driverBitism)
-    deleteDSN ='Remove-OdbcDSN -Name "{}" -Platform {} -DsnType System;\n '.format(dsn_name, driverBitism)
-    addDSN ='Add-OdbcDSN -Name "{}" -Platform {} -DsnType System -DriverName $Drivers[0].Name'.format(dsn_name, driverBitism) 
-    addDSNProperties = ' -SetPropertyValue "Database={}","ServerName={}","Port={}","Username={}","Password={}"\n'.format(database_name, database_connection['server_name'],database_connection['server_port'],database_connection['user'],database_connection['password'])
-    fullCommand=findDriver + deleteDSN + addDSN + addDSNProperties
-    write_log(fullCommand)
-    powershell(fullCommand)
+    deletedsn ='Remove-OdbcDSN -Name "{}" -Platform {} -DsnType System;\n '.format(dsn_name, driverbitism)
+    adddsn ='Add-OdbcDSN -Name "{}" -Platform {} -DsnType System -DriverName $Drivers[0].Name'.format(dsn_name, driverbitism) 
+    adddsnproperties = ' -SetPropertyValue "Database={}","ServerName={}","Port={}","Username={}","Password={}"\n'.format(database_name, database_connection['server_name'],database_connection['server_port'],database_connection['user'],database_connection['password'])
+    fullcommand=finddriver + deletedsn + adddsn + adddsnproperties
+    write_log(fullcommand)
+    powershell(fullcommand)
 
 def find_owner(filename):
     return getpwuid(stat(filename,follow_symlinks=False).st_uid).pw_name
@@ -81,17 +82,17 @@ def create_region(main_configfile):
     #determine where the product has been installed
     if sys.platform.startswith('win32'):
         os_type = 'Windows'
-        os_distribution =''
+        
         install_dir = set_MF_environment (os_type)
         if install_dir is None:
             write_log('COBOL environment not found')
             exit(1)
         cobdir = str(Path(install_dir).parents[0])
         os.environ['COBDIR'] = cobdir
-        pathMfAnt = Path(os.path.join(cobdir, 'bin', 'mfant.jar')) 
+        pathmfant = Path(os.path.join(cobdir, 'bin', 'mfant.jar')) 
     else:
         os_type = 'Linux'
-        os_distribution = '' #distro.id()
+        
         install_dir = set_MF_environment (os_type)
         if install_dir is None:
             write_log('COBOL environment not set - run cobsetenv')
@@ -100,13 +101,13 @@ def create_region(main_configfile):
         if cobdir == '':
             write_log('COBOL environment not set - run cobsetenv')
             exit(1)
-        pathMfAnt = Path(os.path.join(cobdir,'lib', 'mfant.jar')) 
+        pathmfant = Path(os.path.join(cobdir,'lib', 'mfant.jar')) 
 
     write_log('COBDIR={}'.format(cobdir))
     write_log('Provision Process starting')
    
     config_dir = os.path.join(cwd, 'config')
-    options_dir = os.path.join(cwd, 'options')
+    
 
     #read demo configuration file
     write_log('Reading deployment config file {}'.format(main_configfile))
@@ -123,20 +124,19 @@ def create_region(main_configfile):
         mf_product = 'EDz'
     # Override if compiler is mfant.jar is not found
     if mf_product == 'EDz':
-        if pathMfAnt.is_file() != True:
+        if pathmfant.is_file() != True:
             mf_product = 'ES'
         elif os_type == 'Windows':
-            # Use the product JDK if possible
-            pathJDK = Path(os.path.join(cobdir,'AdoptOpenJDK'))
-            if pathJDK.is_dir():
-                os.environ["JAVA_HOME"] = str(pathJDK)
-                write_log('Using JAVA_HOME={}'.format(str(pathJDK)))
+            pathjdk = Path(os.path.join(cobdir,'AdoptOpenJDK'))
+            if pathjdk.is_dir():
+                os.environ["JAVA_HOME"] = str(pathjdk)
+                write_log('Using JAVA_HOME={}'.format(str(pathjdk)))
             elif "JAVA_HOME" not in os.environ:
                 write_log('JAVA_HOME not set, cannot build application')
                 mf_product = 'ES'
             else:
-                pathJDK = Path(os.environ["JAVA_HOME"])
-                if pathJDK.is_dir() != True:
+                pathjdk = Path(os.environ["JAVA_HOME"])
+                if pathjdk.is_dir() != True:
                     write_log('JAVA_HOME invalid, cannot build application')
                     mf_product = 'ES'
         else:
@@ -146,9 +146,7 @@ def create_region(main_configfile):
 
     write_log('Configured for product: {}'.format(mf_product))
 
-    cics_region = main_config["CICS"]
-    jes_region = main_config["JES"]
-    mq_region = main_config["MQ"]
+    
 
     is64bit = main_config["is64bit"]
     if os_type == 'Linux':
@@ -162,7 +160,7 @@ def create_region(main_configfile):
         dataversion = 'vsam'
     else:
         database_type= main_config["database"]
-        sql_folder= os.path.join(cwd, 'config', 'database', database_type)
+        
         if database_type.split('_')[0] == 'VSAM':
             dataversion = 'vsam'
         else:
@@ -251,7 +249,7 @@ def create_region(main_configfile):
         rdef = os.path.join(sys_base, 'rdef')
         create_dfhdrdat =  '\"' +caspcrd + '\" /c /dp=' + rdef
         write_log ('Create resource definition file {}'.format(create_dfhdrdat))
-        caspcrd_process = os.system(create_dfhdrdat)
+        os.system(create_dfhdrdat)
         #change ownership to match ES user
         if os_type == 'Linux':
             dfhdrdat = os.path.join(rdef, 'dfhdrdat')
@@ -368,7 +366,7 @@ def create_region(main_configfile):
             write_log('Checking region {} started successfully'.format(region_name))
             confirmed = confirm_region_status(session, region_name, 1, 'Started')
         except ESCWAException as exc:
-            write_log('Unable to check region status.')
+            write_log(REGION_STATUS_ERR)
             write_log(exc)
             sys.exit(1)
     
@@ -428,7 +426,7 @@ def create_region(main_configfile):
             fct_match_pattern = os.path.join(resourcedef_dir, 'rdef_fct_*.json')
             fct_filelist = glob.glob(fct_match_pattern)
 
-            if fct_filelist != '':
+            if fct_filelist:
                 for filename in fct_filelist:
                     fct_details = read_json(filename)
                     add_fct(session, region_name,ip_address,fct_details)
@@ -437,7 +435,7 @@ def create_region(main_configfile):
         ppt_match_pattern = os.path.join(resourcedef_dir, 'rdef_ppt_*.json')
         ppt_filelist = glob.glob(ppt_match_pattern)
 
-        if ppt_filelist != '':
+        if ppt_filelist:
            write_log ('CICS Resource PPT definitions found - being added') 
            for filename in ppt_filelist:
                ppt_details = read_json(filename)
@@ -447,7 +445,7 @@ def create_region(main_configfile):
         pct_match_pattern = os.path.join(resourcedef_dir, 'rdef_pct_*.json')
         pct_filelist = glob.glob(pct_match_pattern)
 
-        if pct_filelist != '':
+        if pct_filelist:
            write_log ('CICS Resource PCT definitions found - being added')  
            for filename in pct_filelist:
                pct_details = read_json(filename)
@@ -475,7 +473,7 @@ def create_region(main_configfile):
         deploy_partitioned_data(parentdir,sys_base, esuid)
 
     ## Update the SIT setting for this region
-    if new_sit_name != '': 
+    if new_sit_name:
         write_log ('SIT {} previously added - setting this as the default for region {}'.format(new_sit_name, region_name))
         update_sit_in_use(session, region_name, ip_address, new_sit_name)
         write_log ('Region restart now required')
@@ -484,9 +482,9 @@ def create_region(main_configfile):
     ## The following code deploys the application
     deploy_application_option(session, database_type, os_type, main_config, cwd, mfdbfh_config, esuid)
     if  database_type == 'SQL_Postgres':
-        loadlibDir = 'SQL_Postgres'
+        loadlibdir = 'SQL_Postgres'
     else:
-        loadlibDir = 'VSAM'
+        loadlibdir = 'VSAM'
 
     if mf_product != 'EDz':
         write_log('The Rocket {} product does not contain a compiler. Precompiled executables therefore being deployed'.format(mf_product))
@@ -498,21 +496,21 @@ def create_region(main_configfile):
         elif "ANT_HOME" in os.environ:
             ant_home = os.environ["ANT_HOME"]
         else:
-            eclipsInstallDir = get_EclipsePluginsDir(os_type)
-            if eclipsInstallDir is not None:
-                for file in os.listdir(eclipsInstallDir):
+            eclipseinstalldir = get_EclipsePluginsDir(os_type)
+            if eclipseinstalldir is not None:
+                for file in os.listdir(eclipseinstalldir):
                     if file.startswith("org.apache.ant_"):
-                        ant_home = os.path.join(eclipsInstallDir, file)
+                        ant_home = os.path.join(eclipseinstalldir, file)
             if ant_home is None:
                 antdir = get_CobdirAntDir(os_type)
                 if antdir is not None:
                     for file in os.listdir(antdir):
                         if file.startswith("apache-ant-"):
-                            ant_home = os.path.join(eclipsInstallDir, file)
+                            ant_home = os.path.join(eclipseinstalldir, file)
 
         if ant_home is None:
             write_log('ANT_HOME not set. Precompiled executables therefore being deployed')
-            deploy_application(parentdir, sys_base, os_type, is64bit, loadlibDir)
+            deploy_application(parentdir, sys_base, os_type, is64bit, loadlibdir)
         else:
             write_log('Application being built')
 
@@ -525,7 +523,7 @@ def create_region(main_configfile):
             run_ant_file(build_file,source_dir,load_dir,ant_home, dataversion, is64bit)
 
     write_log('Precompiled system executables being deployed'.format(mf_product))
-    deploy_system_modules(parentdir, sys_base, os_type, is64bit, loadlibDir)
+    deploy_system_modules(parentdir, sys_base, os_type, is64bit, loadlibdir)
 
     ## Following the update of the SIT and other attributes, the region must be restarted
     try:
@@ -540,7 +538,7 @@ def create_region(main_configfile):
         write_log('Checking region {} stopped successfully'.format(region_name))
         confirmed = confirm_region_status(session, region_name, 1, 'Stopped')
     except ESCWAException as exc:
-        write_log('Unable to check region status.')
+        write_log(REGION_STATUS_ERR)
         write_log(exc)
         sys.exit(1)
 
@@ -580,7 +578,7 @@ def create_region(main_configfile):
         write_log('Checking region {} restarted successfully'.format(region_name))
         confirmed = confirm_region_status(session, region_name, 1, 'Started')
     except ESCWAException as exc:
-        write_log('Unable to check region status.')
+        write_log(REGION_STATUS_ERR)
         write_log(exc)
         sys.exit(1)
 

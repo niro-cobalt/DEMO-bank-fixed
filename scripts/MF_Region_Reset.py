@@ -29,14 +29,14 @@ from utilities.exceptions import ESCWAException
 def reset_region(region_name='BANKDEMO', ip_address='127.0.0.1', mins_allowed=1):
     session = EscwaSession("http", ip_address, 10086)
     try:
-        mark_res = mark_region_stopped(session, region_name)
-    except ESCWAException as exc:
+        mark_region_stopped(session, region_name)
+    except ESCWAException:
         print('Unable to mark region as stopped.')
         sys.exit(1)
 
     try:
         confirmed = confirm_region_status(session, region_name, mins_allowed, 'Stopped')
-    except ESCWAException as exc:
+    except ESCWAException:
         print('Unable to confirm region is stopped.')
         sys.exit(1)
 

@@ -26,11 +26,11 @@ from ESCWA.job_control import submit_jcl, check_job
 from utilities.exceptions import ESCWAException
 
 
-def submit_job(jcl_file, working_folder, ip_address='127.0.0.1', region_name='BANKDEMO'):
+def submit_job(jcl_file, ip_address='127.0.0.1', region_name='BANKDEMO'):
     session = EscwaSession("http", ip_address, 10086)
     try:
         submit_res = submit_jcl(session, region_name, ip_address, jcl_file)
-    except ESCWAException as exc:
+    except ESCWAException:
         print('Unable to submit job.')
         sys.exit(1)
 
@@ -41,7 +41,7 @@ def submit_job(jcl_file, working_folder, ip_address='127.0.0.1', region_name='BA
 
     try:
         run_res = check_job(session, region_name, ip_address, job_id)
-    except ESCWAException as exc:
+    except ESCWAException:
         print('Unable to check job.')
         sys.exit(1)
 
@@ -61,7 +61,7 @@ if __name__ == '__main__':
         '--RegionName': 'region_name',
         '--RegionHost': 'ip_address',
         '--JCLFileName=': 'jcl_file',
-        '--WSpaceFolder=': 'working_folder'
+        
     }
 
     kwargs = parse_args(sys.argv[1:], short_map, long_map)

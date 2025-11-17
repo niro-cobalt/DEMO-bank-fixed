@@ -29,7 +29,7 @@ def check_status(region_name='BANKDEMO', ip_address='127.0.0.1'):
     session = EscwaSession("http", ip_address, 10086)
     try:
         status_res = get_region_status(session, region_name)
-    except ESCWAException as exc:
+    except ESCWAException:
         print('Unable to check region.')
         sys.exit(1)
 
