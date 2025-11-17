@@ -42,7 +42,7 @@ def add_region(session, region_name, port, template_file, is64bit):
     res = session.post(uri, req_body, 'Unable to complete Add Region API request. Region may already be defined')
     return res
 
-def start_region(session, region_name, ip_address):
+def start_region(session, region_name):
     """ Starts a previously created region on the server region. """
     uri = 'native/v1/regions/{}/{}/{}/start'.format('127.0.0.1', os.getenv("CCITCP2_PORT","86"), region_name)
     req_body = {
@@ -74,7 +74,6 @@ def mark_region_stopped(session, region_name):
         'mfServerStatus': 'Stopped'
     }
     res = session.put(uri, req_body, 'Unable to complete Mark Region Stopped API request.')
-    session = get_session()
     return res
 
 def del_region(session, region_name):
