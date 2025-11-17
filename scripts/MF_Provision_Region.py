@@ -24,7 +24,7 @@ import sys
 import glob
 from ESCWA.escwa_session import EscwaSession
 from utilities.pac import install_region_into_pac_by_name, create_crossregion_database, create_region_database
-from utilities.misc import parse_args, set_MF_environment, get_EclipsePluginsDir, get_CobdirAntDir, check_elevation, check_esuid
+from utilities.misc import parse_args, set_mf_environment, get_eclipse_plugins_dir, get_cobdir_ant_dir, check_elevation, check_esuid
 from utilities.input import read_json, read_txt
 from utilities.output import write_json, write_log 
 from utilities.filesystem import create_new_system, deploy_application, deploy_system_modules, deploy_partitioned_data
@@ -83,7 +83,7 @@ def create_region(main_configfile):
     if sys.platform.startswith('win32'):
         os_type = 'Windows'
         
-        install_dir = set_MF_environment (os_type)
+        install_dir = set_mf_environment (os_type)
         if install_dir is None:
             write_log('COBOL environment not found')
             exit(1)
@@ -93,7 +93,7 @@ def create_region(main_configfile):
     else:
         os_type = 'Linux'
         
-        install_dir = set_MF_environment (os_type)
+        install_dir = set_mf_environment (os_type)
         if install_dir is None:
             write_log('COBOL environment not set - run cobsetenv')
             exit(1)
@@ -496,13 +496,13 @@ def create_region(main_configfile):
         elif "ANT_HOME" in os.environ:
             ant_home = os.environ["ANT_HOME"]
         else:
-            eclipseinstalldir = get_EclipsePluginsDir(os_type)
+            eclipseinstalldir = get_eclipse_plugins_dir(os_type)
             if eclipseinstalldir is not None:
                 for file in os.listdir(eclipseinstalldir):
                     if file.startswith("org.apache.ant_"):
                         ant_home = os.path.join(eclipseinstalldir, file)
             if ant_home is None:
-                antdir = get_CobdirAntDir(os_type)
+                antdir = get_cobdir_ant_dir(os_type)
                 if antdir is not None:
                     for file in os.listdir(antdir):
                         if file.startswith("apache-ant-"):

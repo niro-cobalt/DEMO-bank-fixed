@@ -61,7 +61,7 @@ def parse_args(arg_list, short_map, long_map):
     short_opts = "".join([key.lstrip('-') for key in short_map.keys()])
     long_opts = [key.lstrip('-') for key in long_map.keys()]
     try:
-        opts, args = getopt.getopt(arg_list, short_opts, long_opts)
+        opts, _ = getopt.getopt(arg_list, short_opts, long_opts)
     except getopt.GetoptError as error:
         print(error)
         return None
@@ -73,86 +73,86 @@ def parse_args(arg_list, short_map, long_map):
 
     return kwargs
 
-def set_MF_environment (os_type):
+def set_mf_environment(os_type):
 
     if os_type == 'Windows':
-        localMachineKey = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-        cobolKey = winreg.OpenKey(localMachineKey, r"SOFTWARE\\Micro Focus\\Visual COBOL")
-        defaultVersion = winreg.QueryValueEx(cobolKey, "DefaultVersion")
-        installKeyString =  r'{}\\COBOL\\Install'.format(defaultVersion[0])
-        write_log('Found COBOL version: {}'.format(defaultVersion[0]))
-        installKey = winreg.OpenKey(cobolKey, installKeyString)
-        install_dir = winreg.QueryValueEx(installKey, "BIN")
-        winreg.CloseKey(installKey)
-        winreg.CloseKey(cobolKey)
-        winreg.CloseKey(localMachineKey)
+        localmachinekey = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+        cobolkey = winreg.OpenKey(localmachinekey, r"SOFTWARE\\Micro Focus\\Visual COBOL")
+        defaultversion = winreg.QueryValueEx(cobolkey, "DefaultVersion")
+        installkeystring =  r'{}\\COBOL\\Install'.format(defaultversion[0])
+        write_log('Found COBOL version: {}'.format(defaultversion[0]))
+        installkey = winreg.OpenKey(cobolkey, installkeystring)
+        install_dir = winreg.QueryValueEx(installkey, "BIN")
+        winreg.CloseKey(installkey)
+        winreg.CloseKey(cobolkey)
+        winreg.CloseKey(localmachinekey)
         return install_dir[0]
     else:
         if "COBDIR" in os.environ:
            return os.path.join(os.environ["COBDIR"], "bin")
 
-        pathCOBDIR = Path("/opt/rocketsoftware/EnterpriseDeveloper/bin")
-        if pathCOBDIR.is_dir():
-            return str(pathCOBDIR)
-        pathCOBDIR = Path("/opt/rocketsoftware/EnterpriseServer/bin")
-        if pathCOBDIR.is_dir():
-            return str(pathCOBDIR)
-        pathCOBDIR = Path("/opt/microfocus/EnterpriseDeveloper/bin")
-        if pathCOBDIR.is_dir():
-            return str(pathCOBDIR)
-        pathCOBDIR = Path("/opt/microfocus/EnterpriseServer/bin")
-        if pathCOBDIR.is_dir():
-            return str(pathCOBDIR)
+        pathcobdir = Path("/opt/rocketsoftware/EnterpriseDeveloper/bin")
+        if pathcobdir.is_dir():
+            return str(pathcobdir)
+        pathcobdir = Path("/opt/rocketsoftware/EnterpriseServer/bin")
+        if pathcobdir.is_dir():
+            return str(pathcobdir)
+        pathcobdir = Path("/opt/microfocus/EnterpriseDeveloper/bin")
+        if pathcobdir.is_dir():
+            return str(pathcobdir)
+        pathcobdir = Path("/opt/microfocus/EnterpriseServer/bin")
+        if pathcobdir.is_dir():
+            return str(pathcobdir)
 
     return None
 
-def get_EclipsePluginsDir (os_type):
+def get_eclipse_plugins_dir(os_type):
     if os_type == 'Windows':
-       localMachineKey = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-       cobolKey = winreg.OpenKey(localMachineKey, r"SOFTWARE\\Micro Focus\\Visual COBOL")
-       defaultVersion = winreg.QueryValueEx(cobolKey, "DefaultVersion")
-       installKeyString =  r'{}'.format(defaultVersion[0])
-       installKey = winreg.OpenKey(cobolKey, installKeyString)
+       localmachinekey = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+       cobolkey = winreg.OpenKey(localmachinekey, r"SOFTWARE\\Micro Focus\\Visual COBOL")
+       defaultversion = winreg.QueryValueEx(cobolkey, "DefaultVersion")
+       installkeystring =  r'{}'.format(defaultversion[0])
+       installkey = winreg.OpenKey(cobolkey, installkeystring)
        try:
-           install_dir = winreg.QueryValueEx(installKey, "ECLIPSEINSTALLDIR")
-           pluginsDir = os.path.join(install_dir[0], "eclipse", "plugins")   
-       except FileNotFoundError as exc:
-           pluginsDir = None
-       winreg.CloseKey(installKey)
-       winreg.CloseKey(cobolKey)
-       winreg.CloseKey(localMachineKey)
-       return pluginsDir
+           install_dir = winreg.QueryValueEx(installkey, "ECLIPSEINSTALLDIR")
+           pluginsdir = os.path.join(install_dir[0], "eclipse", "plugins")   
+       except FileNotFoundError:
+           pluginsdir = None
+       winreg.CloseKey(installkey)
+       winreg.CloseKey(cobolkey)
+       winreg.CloseKey(localmachinekey)
+       return pluginsdir
     else:
-       installDir = set_MF_environment(os_type)
-       if installDir is not None:
-           cobdir = Path(installDir).parents[0]
+       installdir = set_mf_environment(os_type)
+       if installdir is not None:
+           cobdir = Path(installdir).parents[0]
            if cobdir is not None:
-               pluginsDir = os.path.join(cobdir, "eclipse", "eclipse", "plugins")
-               pathPluginsDir = Path(pluginsDir)
-               if pathPluginsDir.is_dir():
-                   return pluginsDir
+               pluginsdir = os.path.join(cobdir, "eclipse", "eclipse", "plugins")
+               pathpluginsdir = Path(pluginsdir)
+               if pathpluginsdir.is_dir():
+                   return pluginsdir
 
     return None
 
-def get_CobdirAntDir (os_type):
+def get_cobdir_ant_dir(os_type):
     if os_type == 'Windows':
        return None
     else:
-       cobdir = set_MF_environment(os_type)
+       cobdir = set_mf_environment(os_type)
        if cobdir is not None:
-           antDir = os.path.join(cobdir, "remotedev", "ant")
-           pathAntDir = Path(antDir)
-           if pathAntDir.is_dir():
-               return antDir
+           antdir = os.path.join(cobdir, "remotedev", "ant")
+           pathantdir = Path(antdir)
+           if pathantdir.is_dir():
+               return antdir
 
     return None
     
 def get_cobdir_bin(is64bit):
     if sys.platform.startswith('win32') and is64bit:
-        bin = 'bin64'
+        bindir = 'bin64'
     else:
-        bin = 'bin'
-    cobdir = os.path.join(os.environ['COBDIR'], bin)
+        bindir = 'bin'
+    cobdir = os.path.join(os.environ['COBDIR'], bindir)
     return cobdir
 
 def powershell(cmd):
@@ -161,8 +161,8 @@ def powershell(cmd):
 
 def check_elevation():
     # Check if the current process is running as administator role
-    isAdmin = '$user = [Security.Principal.WindowsIdentity]::GetCurrent();if ((New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {exit 1} else {exit 0}'
-    completed = powershell(isAdmin)
+    isadmin = '$user = [Security.Principal.WindowsIdentity]::GetCurrent();if ((New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {exit 1} else {exit 0}'
+    completed = powershell(isadmin)
     return completed.returncode == 1
 
 def check_esuid(esuid):

@@ -21,7 +21,7 @@ import os
 import sys
 import subprocess
 from utilities.output import write_log 
-from utilities.misc import set_MF_environment
+from utilities.misc import set_mf_environment
 from pathlib import Path
 
 def run_ant_file(build_file, source_dir, load_dir, ant_home, dataversion, is64bit):
@@ -39,7 +39,7 @@ def run_ant_file(build_file, source_dir, load_dir, ant_home, dataversion, is64bi
         set64bit = 'false'
 
     #determine where the product has been installed
-    install_dir = set_MF_environment (os_type)
+    install_dir = set_mf_environment (os_type)
     if install_dir is None:
         write_log("Unable to determine COBDIR")
         sys.exit(1)

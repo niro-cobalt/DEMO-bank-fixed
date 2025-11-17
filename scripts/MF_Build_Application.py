@@ -27,7 +27,7 @@ from utilities.input import read_json
 from utilities.output import write_log 
 from utilities.misc import parse_args 
 from build.MFBuild import  run_ant_file
-from utilities.misc import set_MF_environment, get_EclipsePluginsDir, get_CobdirAntDir
+from utilities.misc import set_mf_environment, get_eclipse_plugins_dir, get_cobdir_ant_dir
 
 def resolve_os_type():
     return "Windows" if sys.platform.startswith('win32') else "Linux"
@@ -39,13 +39,13 @@ def find_ant_home(os_type, main_config):
     elif "ANT_HOME" in os.environ:
         ant_home = os.environ["ANT_HOME"]
     else:
-        eclipseinstalldir = get_EclipsePluginsDir(os_type)
+        eclipseinstalldir = get_eclipse_plugins_dir(os_type)
         if eclipseinstalldir is not None:
             for file in os.listdir(eclipseinstalldir):
                 if file.startswith("org.apache.ant_"):
                     ant_home = os.path.join(eclipseinstalldir, file)
         if ant_home is None:
-            antdir = get_CobdirAntDir(os_type)
+            antdir = get_cobdir_ant_dir(os_type)
             if antdir is not None:
                 for file in os.listdir(antdir):
                     if file.startswith("apache-ant-"):
@@ -55,7 +55,7 @@ def find_ant_home(os_type, main_config):
 def resolve_bitism(main_config, os_type):
     if main_config['is64bit'] == False:
         if os_type == 'Linux':
-            install_dir = set_MF_environment (os_type)
+            install_dir = set_mf_environment (os_type)
             if install_dir is None:
                 write_log("Unable to determine COBDIR")
                 return True

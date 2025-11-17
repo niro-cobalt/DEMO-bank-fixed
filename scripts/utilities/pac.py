@@ -29,7 +29,7 @@ from ESCWA.mfds_config import add_mfds_to_list
 def install_region_into_pac_by_name(session, ip_address, region_name, pac_name, config_dir):
     pacs = get_pacs(session).json()
     for pac in pacs:
-        if pac['PacName'] == pac_name: #todo
+        if pac['PacName'] == pac_name:
             install_config = os.path.join(config_dir, 'installpac.json')
             install_region_into_pac(session, ip_address, region_name, pac['Uid'], install_config)
             return True
@@ -53,8 +53,7 @@ def dbfhadmin(is64bit, cmd):
     arg_list = [dbfhadmin_path]
     arg_list.extend(cmd.split(" "))
     write_log("{} {}".format(dbfhadmin_path, cmd))
-    result = subprocess.run(arg_list)
-    return result
+    return subprocess.run(arg_list)
 
 def create_crossregion_database(main_config):
     is64bit = main_config["is64bit"]
@@ -80,4 +79,4 @@ def create_region_database(main_config):
     cmd = "-script -type:region -provider:pg -name:{} -db:{} -file:create_region_db.sql".format(pac_name, pac_db)
     dbfhadmin(is64bit, cmd)
     arg_list = ["psql", "--file", "create_region_db.sql", "postgresql://{}:{}@{}:{}".format(database_user, database_pwd, database_server, database_port)]
-    result = subprocess.run(arg_list)
+    subprocess.run(arg_list)
