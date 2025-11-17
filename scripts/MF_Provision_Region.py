@@ -522,7 +522,7 @@ def create_region(main_configfile):
             load_dir = os.path.join(parentdir, region_name,'system','loadlib')
             full_build = True
 
-            run_ant_file(build_file,source_dir,load_dir,ant_home, full_build, dataversion, is64bit)
+            run_ant_file(build_file,source_dir,load_dir,ant_home, dataversion, is64bit)
 
     write_log('Precompiled system executables being deployed'.format(mf_product))
     deploy_system_modules(parentdir, sys_base, os_type, is64bit, loadlibDir)

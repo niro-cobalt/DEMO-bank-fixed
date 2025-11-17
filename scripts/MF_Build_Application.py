@@ -89,7 +89,7 @@ def build_programs():
     else:
         set64bit = True
 
-    run_ant_file(build_file,source_dir,load_dir,ant_home, full_build, dataversion, set64bit)
+    run_ant_file(build_file,source_dir,load_dir,ant_home, dataversion, set64bit)
 
    
 if __name__ == '__main__':

@@ -24,7 +24,7 @@ from utilities.output import write_log
 from utilities.misc import set_MF_environment
 from pathlib import Path
 
-def run_ant_file(build_file, source_dir, load_dir, ant_home, full_build,dataversion, is64bit):
+def run_ant_file(build_file, source_dir, load_dir, ant_home, dataversion, is64bit):
 
     if sys.platform.startswith('win32'):
         os_type = 'Windows'
@@ -59,13 +59,13 @@ def run_ant_file(build_file, source_dir, load_dir, ant_home, full_build,datavers
         os.environ['COBCPY'] = cobdir + '/cpylib:' + os.environ['COBCPY']
         os.environ['CLASSPATH'] = mfant_jar # Bug in some Ant versions ignores -lib    
         ant_cmd = ['sh', ant_exe, '-lib', mfant_jar, '-f', build_file, '-Dbasedir', source_dir, '-Dloaddir', load_dir, '-Ddataversion', dataversion, '-D64bitset', set64bit]
-        useShell = False
+        useshell = False
     else:
         ant_cmd = [ant_exe, '-lib', mfant_jar, '-f', build_file, '-Dbasedir', source_dir, '-Dloaddir', load_dir, '-Ddataversion', dataversion, '-D64bitset', set64bit]
-        useShell = True
+        useshell = True
     #write_log(ant_cmd)
     
 
     with open('build.txt', "w") as outfile:
-        subprocess.run(ant_cmd, stdout=outfile, stderr=outfile, shell=useShell, check=True)
+        subprocess.run(ant_cmd, stdout=outfile, stderr=outfile, shell=useshell, check=True)
 
