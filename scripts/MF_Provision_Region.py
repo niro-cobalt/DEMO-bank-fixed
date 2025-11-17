@@ -523,7 +523,7 @@ def create_region(main_configfile):
             run_ant_file(build_file,source_dir,load_dir,ant_home, dataversion, is64bit)
 
     write_log('Precompiled system executables being deployed'.format(mf_product))
-    deploy_system_modules(parentdir, sys_base, os_type, is64bit, loadlibdir)
+    deploy_system_modules(parentdir, sys_base, os_type, is64bit)
 
     ## Following the update of the SIT and other attributes, the region must be restarted
     try:
@@ -557,7 +557,7 @@ def create_region(main_configfile):
                 psor_connection=pac_config['PSOR_connection']
                 pac_description=pac_config['description']
                 create_pac(session, config_dir, pac_name, psor_connection, pac_description, psor_type)
-                deploy_dfhdrdat_postgres_pac(session, os_type, main_config, mfdbfh_config, rdef)
+                deploy_dfhdrdat_postgres_pac(os_type, main_config, mfdbfh_config, rdef)
 
         update_region_attribute(session, region_name, {"mfCASTXRDTP": "sql://BankPAC/VSAM?type=folder;folder=/system"})
         update_region_attribute(session, region_name, {"mfCASJCLALLOCLOC": "sql://BankPAC/VSAM?type=folder;folder=/data"})

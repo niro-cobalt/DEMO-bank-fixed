@@ -50,7 +50,7 @@ def deploy_application (repo_dir, sys_base, os_type, is64bit, database_type):
     source_load = os.path.join(exec_load, 'core')
     shutil.copytree(source_load, target_load, dirs_exist_ok=True)
 
-def deploy_system_modules (repo_dir, sys_base, os_type, is64bit, database_type):
+def deploy_system_modules (repo_dir, sys_base, os_type, is64bit):
 
     target_load = os.path.join(sys_base, 'loadlib')
 
@@ -63,7 +63,7 @@ def deploy_system_modules (repo_dir, sys_base, os_type, is64bit, database_type):
     source_load = os.path.join(exec_load, 'system')
     shutil.copytree(source_load, target_load, dirs_exist_ok=True)
 
-def deploy_vsam_data (repo_dir, sys_base, os_type, esuid):
+def deploy_vsam_data (repo_dir, sys_base, esuid):
 
     target_load = os.path.join(sys_base, 'catalog', 'data')
     source_load = os.path.join(repo_dir, 'datafiles')
@@ -92,17 +92,17 @@ def deploy_partitioned_data (repo_dir, sys_base, esuid):
         for file in os.scandir(target_load):
             shutil.chown(file, esuid, esuid)
 
-def dbfhdeploy_vsam_data (repo_dir, os_type, is64Bit, configuration_files, mfdbfh_location):
+def dbfhdeploy_vsam_data (repo_dir, os_type, is64bit, mfdbfh_location):
     dataset_dir = os.path.join(repo_dir, 'datafiles')
 
     if os_type == 'Windows':
-        if is64Bit == True:
-            bin = 'bin64'
+        if is64bit == True:
+            bindir = 'bin64'
         else:
-            bin = 'bin'
+            bindir = 'bin'
     else:
-        bin = 'bin'
-    dbfhdeploy = os.path.join(os.environ['COBDIR'], bin, 'dbfhdeploy')
+        bindir = 'bin'
+    dbfhdeploy = os.path.join(os.environ['COBDIR'], bindir, 'dbfhdeploy')
     db = mfdbfh_location.split('{')
     dbfhdeploy_cmd = '\"{}\" create \"{}\"'.format(dbfhdeploy, db[0])
     write_log(dbfhdeploy_cmd)
@@ -116,16 +116,16 @@ def dbfhdeploy_vsam_data (repo_dir, os_type, is64Bit, configuration_files, mfdbf
             write_log(dbfhdeploy_cmd)
             subprocess.run([dbfhdeploy, "add", file.path, catalog_location])
 
-def dbfhdeploy_dataset (os_type, is64Bit, source_location, mfdbfh_location, filename):
+def dbfhdeploy_dataset (os_type, is64bit, source_location, mfdbfh_location, filename):
     if os_type == 'Windows':
-        if is64Bit == True:
-            bin = 'bin64'
+        if is64bit == True:
+            bindir = 'bin64'
         else:
-            bin = 'bin'
+            bindir = 'bin'
     else:
-        bin = 'bin'
+        bindir = 'bin'
         
-    dbfhdeploy = os.path.join(os.environ['COBDIR'], bin, 'dbfhdeploy')
+    dbfhdeploy = os.path.join(os.environ['COBDIR'], bindir, 'dbfhdeploy')
     db = mfdbfh_location.split('{')
     dbfhdeploy_cmd = '\"{}\" create \"{}\"'.format(dbfhdeploy, db[0])
     write_log(dbfhdeploy_cmd)

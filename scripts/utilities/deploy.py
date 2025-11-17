@@ -19,13 +19,8 @@ def deploy_application_option(session, option, os_type, main_config, cwd, mfdbfh
 
 def deploy_sql_postgres(session, os_type, main_config, cwd, esuid): 
     from database.mfpostgres import connect_to_pg_server, execute_pg_command, disconnect_from_pg_server
-
-    configuration_files = main_config["configuration_files"]
     is64bit = main_config["is64bit"]
-    ip_address = main_config["ip_address"]
-    region_name = main_config["region_name"]
     database_engine = 'Postgres'
-    loadlibDir = 'SQL_Postgres'
     database_connection = main_config['database_connection']
     write_log ('Database type {} selected - database being built'.format(database_engine))
     if "odbc" in database_connection:
@@ -43,13 +38,13 @@ def deploy_sql_postgres(session, os_type, main_config, cwd, esuid):
     sql_folder = os.path.join(cwd, 'config', 'database', database_engine) 
     sql_file = os.path.join(sql_folder, 'create.sql')
     sql_command = read_txt(sql_file)
-    execute_res = execute_pg_command(conn, sql_command)
-    dconn_res = disconnect_from_pg_server(conn)
+    execute_pg_command(conn, sql_command)
+    disconnect_from_pg_server(conn)
     conn = connect_to_pg_server(database_connection['server_name'],database_connection['server_port'],'bank',database_connection['user'],database_connection['password'])
     sql_file = os.path.join(sql_folder, 'tables.sql')
     sql_command = read_txt(sql_file)
-    execute_res = execute_pg_command(conn, sql_command)
-    dconn_res = disconnect_from_pg_server(conn)
+    execute_pg_command(conn, sql_command)
+    disconnect_from_pg_server(conn)
 
     ## The following code adds XA resource managers as defined in xa.json
     configure_xa(session, os_type, main_config, cwd, esuid)
@@ -59,7 +54,6 @@ def deploy_vsam_postgres(session, os_type, main_config, cwd, mfdbfh_config, esui
     is64bit = main_config["is64bit"]
     ip_address = main_config["ip_address"]
     region_name = main_config["region_name"]
-    loadlibDir = 'VSAM'
     database_connection = main_config['database_connection']
     if "odbc" in database_connection:
         db_type = database_connection["db_type"]
@@ -80,7 +74,7 @@ def deploy_vsam_postgres(session, os_type, main_config, cwd, mfdbfh_config, esui
     write_log ('MFDBFH version required - datasets being migrated to database')
     os.environ['MFDBFH_CONFIG'] = mfdbfh_config
     parentdir = str(Path(cwd).parents[0])
-    dbfhdeploy_vsam_data(parentdir, os_type, is64bit, configuration_files, "sql://BANKMFDB/VSAM/{}?folder=/data")
+    dbfhdeploy_vsam_data(parentdir, os_type, is64bit, "sql://BANKMFDB/VSAM/{}?folder=/data")
 
     #data_dir_2 hold the directory name, under the cwd that contains definitions of any additional (e.g VSAM) datasets to be catalogued - this setting is optional
     write_log ('MFDBFH version required - adding database locations to catalog')
@@ -101,10 +95,8 @@ def configure_xa(session, os_type, main_config, cwd, esuid):
     write_secret(os_type, "Microfocus/XASW/DBPG/XAOpenString", xa_openstring, esuid)
     
 
-def deploy_dfhdrdat_postgres_pac(session, os_type, main_config, mfdbfh_config, source_location):
+def deploy_dfhdrdat_postgres_pac(os_type, main_config, mfdbfh_config, source_location):
     is64bit = main_config["is64bit"]
-    ip_address = main_config["ip_address"]
-    region_name = main_config["region_name"]
 
     write_log ('MFDBFH version required - CICS resources being migrated to database')
     os.environ['MFDBFH_CONFIG'] = mfdbfh_config
@@ -130,10 +122,6 @@ def create_db_vault_secrets(os_type, main_config, esuid):
             write_secret(os_type, "microfocus/mfdbfh/bankpac.{}.password".format(dsn_name.lower()), db_pwd, esuid)
 
 def deploy_vsam_postgres_pac(session, os_type, main_config, cwd, mfdbfh_config, esuid):
-    database_connection = main_config['database_connection']
-    configuration_files = main_config["configuration_files"]
-    is64bit = main_config["is64bit"]
-    ip_address = main_config["ip_address"]
     region_name = main_config["region_name"]
 
     configure_xa(session, os_type, main_config, cwd, esuid)
@@ -144,7 +132,6 @@ def deploy_vsam_postgres_pac(session, os_type, main_config, cwd, mfdbfh_config, 
     write_log ('out of deploy_vsam_postgres_pac')
 
 def catalog_pac_datasets(session, os_type, main_config, cwd, mfdbfh_config, esuid):
-    database_connection = main_config['database_connection']
     configuration_files = main_config["configuration_files"]
     is64bit = main_config["is64bit"]
     ip_address = main_config["ip_address"]
@@ -154,7 +141,7 @@ def catalog_pac_datasets(session, os_type, main_config, cwd, mfdbfh_config, esui
         write_log ('MFDBFH version required - datasets being migrated to database')
         os.environ['MFDBFH_CONFIG'] = mfdbfh_config
         parentdir = str(Path(cwd).parents[0])
-        dbfhdeploy_vsam_data(parentdir, os_type, is64bit, configuration_files, "sql://BankPAC/VSAM/{}?folder=/data")
+        dbfhdeploy_vsam_data(parentdir, os_type, is64bit, "sql://BankPAC/VSAM/{}?folder=/data")
 
         #data_dir_2 hold the directory name, under the cwd that contains definitions of any additional (e.g VSAM) datasets to be catalogued - this setting is optional
         write_log ('MFDBFH version required - adding database locations to catalog')
@@ -169,6 +156,6 @@ def deploy_vsam(session, os_type, main_config, cwd, esuid):
     region_name = main_config["region_name"]
     parentdir = str(Path(cwd).parents[0])
     sys_base = os.path.join(parentdir, region_name, 'system')
-    deploy_vsam_data(parentdir,sys_base,os_type, esuid)
+    deploy_vsam_data(parentdir,sys_base, esuid)
     #data_dir_2 hold the directory name, under the cwd that contains definitions of any additional (e.g VSAM) datasets to be catalogued - this setting is optional
     catalog_datasets(session, cwd, region_name, ip_address, configuration_files, 'data_dir_2', None, None)
