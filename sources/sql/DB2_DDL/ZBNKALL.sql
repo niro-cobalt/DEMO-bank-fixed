@@ -24,9 +24,9 @@ COMMIT;
 
 CREATE TABLE BNKATYPE
 (
-    BAT_TYPE                  CHAR(1) NOT NULL,
-    BAT_DESC                  CHAR(15) NOT NULL,
-    BAT_FILLER                CHAR(84) NOT NULL,
+    BAT_TYPE                  VARCHAR2(1) NOT NULL,
+    BAT_DESC                  VARCHAR2(15) NOT NULL,
+    BAT_FILLER                VARCHAR2(84) NOT NULL,
     PRIMARY KEY (BAT_TYPE)
 );
 --IN DATABASE DBNASE
