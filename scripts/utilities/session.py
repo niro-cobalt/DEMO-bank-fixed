@@ -30,7 +30,7 @@ def read_cookies():
     try:
         with open(cookies_path, 'rb') as cookies_file:
             cookies = pickle.load(cookies_file)
-    except IOError as exc:
+    except IOError:
         return None
 
     return cookies
@@ -56,5 +56,5 @@ def save_cookies(cookies):
     try:
         with open(cookies_path, 'wb') as cookies_file:
             pickle.dump(cookies, cookies_file)
-    except IOError as exc:
+    except IOError:
         return
