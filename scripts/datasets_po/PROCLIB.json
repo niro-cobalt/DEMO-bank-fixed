@@ -1,0 +1,11 @@
+{
+  "name": "SYS1.PROCLIB",
+  "cataloged": true,
+  "physicalFile": "<CATALOGFOLDER>/data/proclib",
+  "dataSetOrganization": "PO",
+  "recordFormat": "LSEQ",
+  "recordLength": 80,
+  "codeset": "ASCII",
+  "dynamicPds": true,
+  "pdsExtensions": "prc"
+}

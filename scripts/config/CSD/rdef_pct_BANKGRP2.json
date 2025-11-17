@@ -1,0 +1,12 @@
+{"PCT_Entries": [
+    {       "name":"BANK",
+            "group": "BANKGRP2",
+            "description": "Demo system - BANK txn",
+            "programName": "SBANK00P",
+            "workArea": 0,
+            "enabled": true,
+            "inboundEnabled": true,
+            "tranClass": "DFHTCL00"         
+    }
+]   
+}

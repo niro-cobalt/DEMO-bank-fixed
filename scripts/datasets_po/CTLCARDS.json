@@ -1,0 +1,11 @@
+{
+  "name": "MFI01.MFIDEMO.CTLCARDS",
+  "cataloged": true,
+  "physicalFile": "<CATALOGFOLDER>/data/ctlcards",
+  "dataSetOrganization": "PO",
+  "recordFormat": "LSEQ",
+  "recordLength": 80,
+  "codeset": "ASCII",
+  "dynamicPds": true,
+  "pdsExtensions": "ctl"
+}

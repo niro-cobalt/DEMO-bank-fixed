@@ -1,0 +1,68 @@
+{
+    "ip_address" : "127.0.0.1",
+    "region_name": "BANKPAC1",
+    "regionPort": 9023,
+    "jesPort": 8001,
+    "product": "ES",
+    "configuration_files":
+        {
+            "base_config": "base.json",
+            "update_config": "update.json",
+            "env_config": "env_pg_pac.json",
+            "alias_config": "alias.json",
+            "init_config": "init.json",
+            "secrets_config": "mfsecrets_login.json",
+            "data_dir_1": "datasets_po",
+            "data_dir_2": "datasets_vsam",
+            "data_dir_3": "datasets_gdg",
+            "xa_config": "xa_postgres_pac.json"
+        },
+    "JES": true,
+    "CICS": true,
+    "MQ": false,
+    "is64bit": true,
+    "database": "VSAM_Postgres_PAC",
+    "mfdbfh_config": "MFDBFH_PG_PAC.cfg",
+    "pac_name": "BANKPAC",
+	"pac_db_name": "BANK_PAC",
+    "PAC": {
+      "enabled": true,
+      "PSOR_name" : "BANKSOR",
+      "PSOR_type" : "redis",
+      "PSOR_connection": "localhost:6379",
+      "description": "",
+      "additional_directory_servers": []
+    },
+    "database_connection": 
+        {
+            "create_regiondb": true,
+            "server_name": "localhost",
+            "server_port": "5432",
+            "user": "postgres",
+            "password" :"postgres",
+            "db_type": "postgres",
+            "odbc":
+            [
+                {
+                    "dsn_name": "PG.MASTER",
+                    "dsn_description": "MFDBFH Control",
+                    "db_name": "postgres"
+                },
+                {
+                    "dsn_name": "PG.VSAM",
+                    "dsn_description": "VSAM Datasets",
+                    "db_name": "BANK_PAC"
+                },
+                {
+                    "dsn_name": "PG.REGION",
+                    "dsn_description": "PAC DB",
+                    "db_name": "BANK_PAC"
+                },
+                {
+                    "dsn_name": "PG.CROSSREGION",
+                    "dsn_description": "Cross PAC DB",
+                    "db_name": "BANK_PAC"
+                }
+            ]
+        }
+}

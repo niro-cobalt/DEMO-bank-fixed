@@ -1,0 +1,41 @@
+{
+    "ip_address" : "127.0.0.1",
+    "region_name": "BANKDEMO",
+    "regionPort": 9023,
+    "jesPort": 8001,
+    "product": "EDz",
+    "configuration_files":
+        {
+            "base_config": "base.json",
+            "update_config": "update.json",
+            "env_config": "env.json",
+            "alias_config": "alias.json",
+            "init_config": "init.json",
+            "data_dir_1": "datasets_po",
+            "data_dir_2": "datasets_vsam",
+            "data_dir_3": "datasets_gdg",
+            "xa_config": "xa_Postgres.json"
+        },
+    "JES": true,
+    "CICS": true,
+    "MQ": false,
+    "is64bit": false,
+    "database": "VSAM",
+    "mfdbfh_config": "MFDBFH.cfg",
+    "pac_name": "",
+    "pac_db_name": "",
+    "PAC": {
+      "enabled": false,
+      "PSOR_name" : "",
+      "PSOR_type" : "redis",
+      "PSOR_connection": "localhost:6379",
+      "description": ""
+    },
+    "database_connection": 
+        {
+            "server_name": "localhost",
+            "server_port": "5432",
+            "user": "postgres",
+            "password" :"postgres"
+        }
+}

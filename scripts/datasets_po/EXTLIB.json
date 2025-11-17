@@ -1,0 +1,11 @@
+{
+  "name": "MFI01.MFIDEMO.LOADLIB",
+  "cataloged": true,
+  "physicalFile": "<CATALOGFOLDER>/data/extlib",
+  "dataSetOrganization": "PO",
+  "recordFormat": "LSEQ",
+  "recordLength": 80,
+  "codeset": "ASCII",
+  "dynamicPds": true,
+  "pdsExtensions": "DLL"
+}
