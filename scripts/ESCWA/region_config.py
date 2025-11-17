@@ -31,16 +31,14 @@ def update_region(session, region_name, template_file, env_file, region_descript
     uri = 'native/v1/regions/{}/{}/{}'.format('127.0.0.1', os.getenv("CCITCP2_PORT","86"), region_name)
     esp_alias = '$ESP'
     if sys.platform.startswith('win32'):
-        path_sep = ';'
         log_dir = os.path.join(esp_alias, 'logs')
     else:
-        path_sep = ':'
         log_dir = '' # system dir unsupported on Unix/Linux
 
     loadlib_dir = os.path.join(esp_alias, 'loadlib')
     catalog_dir = os.path.join(esp_alias, 'catalog')
     catalog_data_dir = os.path.join(catalog_dir, 'data')
-    #data_dir = os.path.join(esp_alias, 'Data')
+    
     rdef_dir = os.path.join(esp_alias, 'rdef')
 
     if catalog_file == None:
@@ -98,7 +96,7 @@ def add_initiator(session, region_name, ip_address, template_file):
     uri = 'native/v1/regions/{}/{}/{}/initiator'.format(ip_address, os.getenv("CCITCP2_PORT","86"), region_name)
     try:
         req_body = read_json(template_file)
-    except InputException as exc:
+    except InputException:
         raise ESCWAException('Unable to read initiator file: {}'.format(template_file))
     req_body['CN'] = region_name
     res = session.post(uri, req_body, 'Unable to complete Add Initiator API request.')
@@ -109,16 +107,15 @@ def add_datasets(session, region_name, ip_address, datafile_list, mfdbfh_locatio
     """ Adds data sets to a server region. """
     try:
         dataset_list = [read_json(data_file) for data_file in datafile_list]
-    except InputException as exc:
+    except InputException:
         raise ESCWAException('Unable to read dataset files')
     responses = []
     for dataset in dataset_list:
         uri = 'v2/native/regions/{}/{}/{}/catalog'.format(ip_address, os.getenv("CCITCP2_PORT","86"), region_name)
         if mfdbfh_location is not None:
-            # sql://bank_mfdbfh/VSAM/{}?folder=/data
-            physicalFile = os.path.basename(dataset['physicalFile'])
-            physicalFile = mfdbfh_location.format(physicalFile)
-            dataset['physicalFile'] = physicalFile
+            physicalfile = os.path.basename(dataset['physicalFile'])
+            physicalfile = mfdbfh_location.format(physicalfile)
+            dataset['physicalFile'] = physicalfile
         else:
             if catalog_dir is not None and 'physicalFile' in dataset:
                 dataset['physicalFile'] = dataset['physicalFile'].replace('<CATALOGFOLDER>', catalog_dir)

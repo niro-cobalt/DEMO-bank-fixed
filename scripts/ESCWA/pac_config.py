@@ -20,6 +20,7 @@ Description:  Function for configuring a server region.
 from utilities.input import read_json
 from utilities.exceptions import ESCWAException, InputException
 
+TEMPLATE_READ_ERR = 'Unable to read template file: {}.'
 def find_sor(session, sor_name):
     """ Adds a SOR. """
     uri = 'server/v1/config/groups/sors'
@@ -30,47 +31,47 @@ def find_sor(session, sor_name):
             return sor['Uid']
     return None
 
-def add_sor(session, sor_name, sor_description, sorType, sorConnectPath, template_file):
+def add_sor(session, sor_name, sor_description, sortype, sorconnectpath, template_file):
     """ Adds/updates a SOR. """
     try:
         req_body = read_json(template_file)
     except InputException as exc:
-        raise ESCWAException('Unable to read template file: {}.'.format(template_file)) from exc
+        raise ESCWAException(TEMPLATE_READ_ERR.format(template_file)) from exc
     req_body['SorName'] = sor_name
     req_body['SorDescription'] = sor_description
-    req_body['SorType'] = sorType
-    req_body['SorConnectPath'] = sorConnectPath
-    sorUid = find_sor(session, sor_name)
-    if sorUid is None:
+    req_body['SorType'] = sortype
+    req_body['SorConnectPath'] = sorconnectpath
+    soruid = find_sor(session, sor_name)
+    if soruid is None:
         uri = 'server/v1/config/groups/sors'
         res = session.post(uri, req_body, 'Unable to complete Add SOR API request.')
     else:
-        uri = 'server/v1/config/groups/sors/{}'.format(sorUid)
+        uri = 'server/v1/config/groups/sors/{}'.format(soruid)
         res = session.put(uri, req_body, 'Unable to complete Update SOR API request.')
 
     return res
 
-def add_pac(session, pac_name, pac_description, sorUid, template_file):
+def add_pac(session, pac_name, pac_description, soruid, template_file):
     """ Adds a PAC. """
     pacs = get_pacs(session).json()
-    pacUid = None
+    pacuid = None
     for pac in pacs:
         if pac['PacName'] == pac_name:
-            pacUid = pac['Uid']
+            pacuid = pac['Uid']
             break
 
     try:
         req_body = read_json(template_file)
     except InputException as exc:
-        raise ESCWAException('Unable to read template file: {}.'.format(template_file)) from exc
+        raise ESCWAException(TEMPLATE_READ_ERR.format(template_file)) from exc
     req_body['PacName'] = pac_name
     req_body['PacDescription'] = pac_description
-    req_body['PacResourceSorUid'] = sorUid
-    if pacUid is None:
+    req_body['PacResourceSorUid'] = soruid
+    if pacuid is None:
         uri = 'server/v1/config/groups/pacs'
         res = session.post(uri, req_body, 'Unable to complete Add PAC API request.')
     else:
-        uri = 'server/v1/config/groups/pacs/{}'.format(pacUid)
+        uri = 'server/v1/config/groups/pacs/{}'.format(pacuid)
         res = session.put(uri, req_body, 'Unable to complete Update PAC API request.')
 
     return res
@@ -85,7 +86,7 @@ def install_region_into_pac(session, ip_address, region_name, pac_uid, template_
     try:
         req_body = read_json(template_file)
     except InputException as exc:
-        raise ESCWAException('Unable to read template file: {}.'.format(template_file)) from exc
+        raise ESCWAException(TEMPLATE_READ_ERR.format(template_file)) from exc
     req_body['Regions'][0]['Host'] = ip_address
     req_body['Regions'][0]['Port'] = "86"
     req_body['Regions'][0]['CN'] = region_name
