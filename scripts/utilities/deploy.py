@@ -18,7 +18,7 @@ def deploy_application_option(session, option, os_type, main_config, cwd, mfdbfh
         deploy_vsam(session, os_type, main_config, cwd, esuid)
 
 def deploy_sql_postgres(session, os_type, main_config, cwd, esuid): 
-    from database.mfpostgres import Connect_to_PG_server, Execute_PG_Command, Disconnect_from_PG_server
+    from database.mfpostgres import connect_to_pg_server, execute_pg_command, disconnect_from_pg_server
 
     configuration_files = main_config["configuration_files"]
     is64bit = main_config["is64bit"]
@@ -39,17 +39,17 @@ def deploy_sql_postgres(session, os_type, main_config, cwd, esuid):
             else:
                 create_linux_dsn(db_type, dsn_name, dsn_description, db_name, database_connection)
 
-    conn = Connect_to_PG_server(database_connection['server_name'],database_connection['server_port'],'postgres',database_connection['user'],database_connection['password'])
+    conn = connect_to_pg_server(database_connection['server_name'],database_connection['server_port'],'postgres',database_connection['user'],database_connection['password'])
     sql_folder = os.path.join(cwd, 'config', 'database', database_engine) 
     sql_file = os.path.join(sql_folder, 'create.sql')
     sql_command = read_txt(sql_file)
-    execute_res = Execute_PG_Command(conn, sql_command)
-    dconn_res = Disconnect_from_PG_server(conn)
-    conn = Connect_to_PG_server(database_connection['server_name'],database_connection['server_port'],'bank',database_connection['user'],database_connection['password'])
+    execute_res = execute_pg_command(conn, sql_command)
+    dconn_res = disconnect_from_pg_server(conn)
+    conn = connect_to_pg_server(database_connection['server_name'],database_connection['server_port'],'bank',database_connection['user'],database_connection['password'])
     sql_file = os.path.join(sql_folder, 'tables.sql')
     sql_command = read_txt(sql_file)
-    execute_res = Execute_PG_Command(conn, sql_command)
-    dconn_res = Disconnect_from_PG_server(conn)
+    execute_res = execute_pg_command(conn, sql_command)
+    dconn_res = disconnect_from_pg_server(conn)
 
     ## The following code adds XA resource managers as defined in xa.json
     configure_xa(session, os_type, main_config, cwd, esuid)

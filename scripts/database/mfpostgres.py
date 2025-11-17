@@ -18,21 +18,21 @@ Description:  PostGres utility functions.
 """
 import psycopg2
 
-def Connect_to_PG_server(database_host, database_port, database_name, database_user, database_password):
+def connect_to_pg_server(database_host, database_port, database_name, database_user, database_password):
 
     connection_details = 'host={} port={} dbname={} user={} password={}'.format(database_host, database_port, database_name, database_user, database_password)
-    PGconn = psycopg2.connect (connection_details)
+    pgconn = psycopg2.connect (connection_details)
 
-    PGconn.autocommit = True
+    pgconn.autocommit = True
 
-    return PGconn
+    return pgconn
 
-def Execute_PG_Command(PGconn, sql_command):
+def execute_pg_command(pgconn, sql_command):
 
-    PGcursor = PGconn.cursor()
+    pgcursor = pgconn.cursor()
 
-    PGcursor.execute(sql_command)
+    pgcursor.execute(sql_command)
 
-def Disconnect_from_PG_server(PGconn):
+def disconnect_from_pg_server(pgconn):
 
-    PGconn.close
+    pgconn.close
