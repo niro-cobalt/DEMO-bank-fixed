@@ -1,20 +1,20 @@
 CREATE TABLE BNKCUST
 (
-    BCS_PID                   CHAR(5) NOT NULL,
-    BCS_NAME                  CHAR(25) NOT NULL,
-    BCS_NAME_FF               CHAR(25) NOT NULL,
-    BCS_SIN                   CHAR(9) NOT NULL ,
-    BCS_ADDR1                 CHAR(25) NOT NULL ,
-    BCS_ADDR2                 CHAR(25) NOT NULL ,
-    BCS_STATE                 CHAR(2) NOT NULL ,
-    BCS_COUNTRY               CHAR(6) NOT NULL ,
-    BCS_POST_CODE             CHAR(6) NOT NULL ,
-    BCS_TEL                   CHAR(12) NOT NULL ,
-    BCS_EMAIL                 CHAR(30) NOT NULL ,
-    BCS_SEND_MAIL             CHAR(1) NOT NULL ,
-    BCS_SEND_EMAIL            CHAR(1) NOT NULL ,
-    BCS_ATM_PIN               CHAR(4) NOT NULL ,
-    BCS_FILLER                CHAR(74) NOT NULL ,
+    BCS_PID                   VARCHAR2(5) NOT NULL,
+    BCS_NAME                  VARCHAR2(25) NOT NULL,
+    BCS_NAME_FF               VARCHAR2(25) NOT NULL,
+    BCS_SIN                   VARCHAR2(9) NOT NULL ,
+    BCS_ADDR1                 VARCHAR2(25) NOT NULL ,
+    BCS_ADDR2                 VARCHAR2(25) NOT NULL ,
+    BCS_STATE                 VARCHAR2(2) NOT NULL ,
+    BCS_COUNTRY               VARCHAR2(6) NOT NULL ,
+    BCS_POST_CODE             VARCHAR2(6) NOT NULL ,
+    BCS_TEL                   VARCHAR2(12) NOT NULL ,
+    BCS_EMAIL                 VARCHAR2(30) NOT NULL ,
+    BCS_SEND_MAIL             VARCHAR2(1) NOT NULL ,
+    BCS_SEND_EMAIL            VARCHAR2(1) NOT NULL ,
+    BCS_ATM_PIN               VARCHAR2(4) NOT NULL ,
+    BCS_FILLER                VARCHAR2(74) NOT NULL ,
     PRIMARY KEY (BCS_PID)
 );
 CREATE UNIQUE INDEX BNKCUST_IDX1 ON BNKCUST
@@ -449,9 +449,9 @@ INSERT INTO PUBLIC.BNKCUST VALUES
 
 CREATE TABLE BNKATYPE
 (
-    BAT_TYPE                  CHAR(1) NOT NULL,
-    BAT_DESC                  CHAR(15) NOT NULL,
-    BAT_FILLER                CHAR(84) NOT NULL,
+    BAT_TYPE                  VARCHAR2(1) NOT NULL,
+    BAT_DESC                  VARCHAR2(15) NOT NULL,
+    BAT_FILLER                VARCHAR2(84) NOT NULL,
     PRIMARY KEY (BAT_TYPE)
 );
 
@@ -469,32 +469,32 @@ INSERT INTO PUBLIC.BNKATYPE VALUES ('5','Mortgage       ',' ');
 
 CREATE TABLE PUBLIC.BNKACC
 (
-    BAC_PID                   CHAR(5) NOT NULL,
-    BAC_ACCNO                 CHAR(9)  NOT NULL,
-    BAC_ACCTYPE               CHAR(1)  NOT NULL,
+    BAC_PID                   VARCHAR2(5) NOT NULL,
+    BAC_ACCNO                 VARCHAR2(9)  NOT NULL,
+    BAC_ACCTYPE               VARCHAR2(1)  NOT NULL,
     BAC_BALANCE               DECIMAL(9,2)  NOT NULL,
     BAC_LAST_STMT_DTE         DATE  NOT NULL,
     BAC_LAST_STMT_BAL         DECIMAL(9,2)  NOT NULL,
-    BAC_ATM_ENABLED           CHAR(2)  NOT NULL,
+    BAC_ATM_ENABLED           VARCHAR2(2)  NOT NULL,
     BAC_ATM_DAY_LIMIT         DECIMAL(3,0) ,
     BAC_ATM_DAY_DTE           DATE ,
     BAC_ATM_DAY_AMT           DECIMAL(3,0) ,
-    BAC_RP1_DAY               CHAR(2) ,
+    BAC_RP1_DAY               VARCHAR2(2) ,
     BAC_RP1_AMOUNT            DECIMAL(7,2) ,
-    BAC_RP1_PID               CHAR(5) ,
-    BAC_RP1_ACCNO             CHAR(9) ,
+    BAC_RP1_PID               VARCHAR2(5) ,
+    BAC_RP1_ACCNO             VARCHAR2(9) ,
     BAC_RP1_LAST_PAY          DATE ,
-    BAC_RP2_DAY               CHAR(2) ,
+    BAC_RP2_DAY               VARCHAR2(2) ,
     BAC_RP2_AMOUNT            DECIMAL(7,2) ,
-    BAC_RP2_PID               CHAR(5) ,
-    BAC_RP2_ACCNO             CHAR(9) ,
+    BAC_RP2_PID               VARCHAR2(5) ,
+    BAC_RP2_ACCNO             VARCHAR2(9) ,
     BAC_RP2_LAST_PAY          DATE ,
-    BAC_RP3_DAY               CHAR(2) ,
+    BAC_RP3_DAY               VARCHAR2(2) ,
     BAC_RP3_AMOUNT            DECIMAL(7,2) ,
-    BAC_RP3_PID               CHAR(5) ,
-    BAC_RP3_ACCNO             CHAR(9) ,
+    BAC_RP3_PID               VARCHAR2(5) ,
+    BAC_RP3_ACCNO             VARCHAR2(9) ,
     BAC_RP3_LAST_PAY          DATE ,
-    BAC_FILLER                CHAR(59) ,
+    BAC_FILLER                VARCHAR2(59) ,
     PRIMARY KEY (BAC_ACCNO),
     FOREIGN KEY (BAC_PID)
             REFERENCES BNKCUST (BCS_PID),
@@ -1265,16 +1265,16 @@ INSERT INTO PUBLIC.BNKACC VALUES
 
 CREATE TABLE BNKTXN
 (
-    BTX_PID                   CHAR(5) NOT NULL,
-    BTX_TYPE                  CHAR(1) NOT NULL,
-    BTX_SUB_TYPE              CHAR(1) NOT NULL,
-    BTX_ACCNO                 CHAR(9),
+    BTX_PID                   VARCHAR2(5) NOT NULL,
+    BTX_TYPE                  VARCHAR2(1) NOT NULL,
+    BTX_SUB_TYPE              VARCHAR2(1) NOT NULL,
+    BTX_ACCNO                 VARCHAR2(9),
     BTX_TIMESTAMP             TIMESTAMP NOT NULL ,
-    BTX_TIMESTAMP_FF          CHAR(26)  ,
+    BTX_TIMESTAMP_FF          VARCHAR2(26)  ,
     BTX_AMOUNT                DECIMAL(9,2) NOT NULL ,
-    BTX_DATA_OLD              CHAR(150) NOT NULL ,
-    BTX_DATA_NEW              CHAR(150)  ,
-    BTX_FILLER                CHAR(27)  ,
+    BTX_DATA_OLD              VARCHAR2(150) NOT NULL ,
+    BTX_DATA_NEW              VARCHAR2(150)  ,
+    BTX_FILLER                VARCHAR2(27)  ,
     FOREIGN KEY (BTX_PID)
             REFERENCES BNKCUST (BCS_PID),
     FOREIGN KEY (BTX_ACCNO)
@@ -1421,9 +1421,9 @@ INSERT INTO PUBLIC.BNKTXN VALUES('T0001','1','1','000000003','2006-12-24 04:04:4
 
 CREATE TABLE BNKHELP
 (
-    BHP_SCRN               CHAR(8) NOT NULL,
-    BHP_LINE               CHAR(2) NOT NULL,
-    BHP_TEXT               CHAR(75) NOT NULL
+    BHP_SCRN               VARCHAR2(8) NOT NULL,
+    BHP_LINE               VARCHAR2(2) NOT NULL,
+    BHP_TEXT               VARCHAR2(75) NOT NULL
 );
 
 
