@@ -4,20 +4,19 @@ import sys
 from utilities.output import write_log 
 from utilities.misc import powershell
 
-def create_windows_dsn(db_type, is64bit, dsn, databaseName, database_connection):
+def create_windows_dsn(db_type, is64bit, dsn, databasename, database_connection):
     if db_type == 'postgres':
-        driverBitism="32-bit"
+        driverbitism="32-bit"
         if is64bit == True:
-            driverBitism="64-bit"
+            driverbitism="64-bit"
 
-        findDriver='$Drivers = Get-OdbcDriver -Name "PostgreSQL*ANSI*" -Platform {};\n '.format(driverBitism)
-        ##findDSN='$DSN = Get-OdbcDsn -Name "{}" -Platform {} -DsnType System;\n'.format(dsn, driverBitism)
-        deleteDSN ='Remove-OdbcDSN -Name "{}" -Platform {} -DsnType System;\n '.format(dsn, driverBitism)
-        addDSN ='Add-OdbcDSN -Name "{}" -Platform {} -DsnType System -DriverName $Drivers[0].Name'.format(dsn, driverBitism) 
-        addDSNProperties = ' -SetPropertyValue "Database={}","ServerName={}","Port={}","Username={}","Password={}"\n'.format(databaseName, database_connection['server_name'],database_connection['server_port'],database_connection['user'],database_connection['password'])
-        fullCommand=findDriver + deleteDSN + addDSN + addDSNProperties
-        write_log(fullCommand)
-        powershell(fullCommand)
+        finddriver='$Drivers = Get-OdbcDriver -Name "PostgreSQL*ANSI*" -Platform {};\n '.format(driverbitism)
+        deletedsn ='Remove-OdbcDSN -Name "{}" -Platform {} -DsnType System;\n '.format(dsn, driverbitism)
+        adddsn ='Add-OdbcDSN -Name "{}" -Platform {} -DsnType System -DriverName $Drivers[0].Name'.format(dsn, driverbitism) 
+        adddsnproperties = ' -SetPropertyValue "Database={}","ServerName={}","Port={}","Username={}","Password={}"\n'.format(databasename, database_connection['server_name'],database_connection['server_port'],database_connection['user'],database_connection['password'])
+        fullcommand=finddriver + deletedsn + adddsn + adddsnproperties
+        write_log(fullcommand)
+        powershell(fullcommand)
     else:
         write_log("create_windows_dsn: invalid db_type {}".format(db_type))
         sys.exit(1)

@@ -45,6 +45,10 @@ def submit_job(jcl_file, working_folder, ip_address='127.0.0.1', region_name='BA
         print('Unable to check job.')
         sys.exit(1)
 
+    if run_res is None:
+        print('Job is not yet complete.')
+        sys.exit(1)
+
     run_res = run_res.json()
 
     print('', run_res['SysoutMsgs'][0], run_res['SysoutMsgs'][1])

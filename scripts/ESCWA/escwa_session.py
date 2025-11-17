@@ -6,20 +6,21 @@ import subprocess
 import json
 import os
 
+URI_JOIN = '{}/{}'
+
 class EscwaSession:
     def __init__(self, protocol, escwa_hostname, escwa_port):
         self._protocol = protocol
         self._hostname = escwa_hostname
         self._port = escwa_port
         self._session = requests.Session()
-        return
 
     def get_uri_start(self):
         return '{}://{}:{}'.format(self._protocol, self._hostname, self._port)
 
     #takes a uri path such as native/v1/regions/localhost/86/abc/commsserver
     def get(self, path, error_description='', params=None):
-        uri = '{}/{}'.format(self.get_uri_start(), path)
+        uri = URI_JOIN.format(self.get_uri_start(), path)
         req_headers = create_headers('CreateRegion', self._hostname)
         try:
             res = self._session.get(uri, headers=req_headers, params=params)
@@ -33,7 +34,7 @@ class EscwaSession:
             raise ESCWAException(desc) from exc
 
     def put(self, path, request_body, error_description=''):
-        uri = '{}/{}'.format(self.get_uri_start(), path)
+        uri = URI_JOIN.format(self.get_uri_start(), path)
         req_headers = create_headers('CreateRegion', self._hostname)
         try:
             res = self._session.put(uri, headers=req_headers, json=request_body)
@@ -47,7 +48,7 @@ class EscwaSession:
             raise ESCWAException(desc) from exc
 
     def post(self, path, request_body, error_description=''):
-        uri = '{}/{}'.format(self.get_uri_start(), path)
+        uri = URI_JOIN.format(self.get_uri_start(), path)
         req_headers = create_headers('CreateRegion', self._hostname)
         try:
             res = self._session.post(uri, headers=req_headers, json=request_body)
@@ -61,7 +62,7 @@ class EscwaSession:
             raise ESCWAException(desc + str(exc)) from exc
 
     def delete(self, path, error_description=''):
-        uri = '{}/{}'.format(self.get_uri_start(), path)
+        uri = URI_JOIN.format(self.get_uri_start(), path)
         req_headers = create_headers('CreateRegion', self._hostname)
         try:
             res = self._session.delete(uri, headers=req_headers)

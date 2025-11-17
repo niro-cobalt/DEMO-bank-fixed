@@ -41,7 +41,7 @@ def check_job(session, region_name, ip_address, job_id):
             return res
         if i != 0:
             time.sleep(60)
-    return res
+    return None
 
 
 def get_output(session, region_name, ip_address, job_id, charset):

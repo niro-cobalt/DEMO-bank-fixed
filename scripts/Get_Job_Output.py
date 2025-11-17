@@ -34,6 +34,10 @@ def get_job_output(job_id, working_folder, ip_address='127.0.0.1', region_name='
         print('Unable to check job status.')
         sys.exit(1)
 
+    if check_res is None:
+        print('Job is not yet complete.')
+        sys.exit(1)
+
     check_res = check_res.json()
     out_dir = os.path.join(working_folder, 'Output')
 
