@@ -30,7 +30,7 @@ def get_job_output(job_id, working_folder, ip_address='127.0.0.1', region_name='
     session = EscwaSession("http", ip_address, 10086)
     try:
         check_res = check_job(session, region_name, ip_address, job_id)
-    except ESCWAException as exc:
+    except ESCWAException:
         print('Unable to check job status.')
         sys.exit(1)
 
@@ -53,7 +53,7 @@ def get_job_output(job_id, working_folder, ip_address='127.0.0.1', region_name='
     for spool_out in check_res['JobDDs']:
         try:
             out_res = get_output(session, region_name, ip_address, spool_out['DDEntityName'], spool_out['DDCode'])
-        except ESCWAException as exc:
+        except ESCWAException:
             print('Unable to get job output.')
             sys.exit(1)
 

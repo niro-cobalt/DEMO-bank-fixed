@@ -40,7 +40,7 @@ def create_pac(session, config_dir, pac_name, psor_connection, pac_description="
         
     addpac_config = os.path.join(config_dir, 'addpac.json')
     try:
-        pac=add_pac(session, pac_name, pac_description, sor['Uid'], addpac_config).json()
+        add_pac(session, pac_name, pac_description, sor['Uid'], addpac_config)
     except ESCWAException as exc:
         print('Unable to add PAC.')
         sys.exit(1)

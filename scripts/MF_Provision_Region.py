@@ -358,7 +358,7 @@ def create_region(main_configfile):
     else:
         try:
             write_log('Region {} being started before further configuration'.format(region_name))
-            start_region(session, region_name, ip_address)
+            start_region(session, region_name)
         except ESCWAException as exc:
             write_log('Unable to start region.')
             write_log(exc)
@@ -570,7 +570,7 @@ def create_region(main_configfile):
 
     try:
         write_log('Restarting region {}'.format(region_name))
-        start_region(session, region_name, ip_address)
+        start_region(session, region_name)
     except ESCWAException as exc:
         write_log('Unable to start region.')
         write_log(exc)

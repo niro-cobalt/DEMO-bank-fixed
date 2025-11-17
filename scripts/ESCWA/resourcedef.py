@@ -33,7 +33,7 @@ def add_sit(session, region_name, ip_address, sit_details):
     res = session.post(uri, req_body, 'Unable to complete Update Startup API request.')
     return res
 
-def add_Startup_list(session, region_name, ip_address, startup_details):
+def add_startup_list(session, region_name, ip_address, startup_details):
     uri = 'native/v1/regions/{}/{}/{}/startup'.format(ip_address, os.getenv("CCITCP2_PORT","86"), region_name)
     req_body =startup_details
     res = session.post(uri, req_body, 'Unable to complete Update Startup API request.')
